@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useEffect, useRef, useState, type Ref } from "react";
 
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -17,9 +17,22 @@ export function WinePage() {
   const { id } = useParams();
   const wine = wines.find((item) => item.id === id);
   const tasting = useTasting();
+  const photoRef = useRef<HTMLDivElement>(null);
+  const [photoOnScreen, setPhotoOnScreen] = useState(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setPhotoOnScreen(true);
+  }, [id]);
+
+  useEffect(() => {
+    const node = photoRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setPhotoOnScreen(entry.isIntersecting);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
   }, [id]);
 
   if (!wine) {
@@ -38,15 +51,30 @@ export function WinePage() {
 
   return (
     <div className="min-h-svh">
-      <header className="sticky top-0 z-20 hidden border-b border-border bg-background lg:block">
-        <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3">
-          <Link to="/" className={cn(buttonVariants({ variant: "outline" }), "shrink-0")}>
-            Nazad
-          </Link>
-        </div>
-      </header>
+      {photoOnScreen ? null : (
+        <header className="fixed inset-x-0 top-0 z-30 border-b border-border bg-background">
+          <div className="mx-auto flex max-w-3xl items-center gap-3 px-3 py-2">
+            <Link
+              to="/"
+              aria-label="Nazad"
+              className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-background text-foreground"
+            >
+              <ArrowLeft aria-hidden="true" className="size-5" />
+            </Link>
+            <div className="min-w-0">
+              <p className="truncate text-base leading-tight font-semibold">{wine.name}</p>
+              <p className="truncate text-sm leading-tight text-muted-foreground">{wine.producer}</p>
+            </div>
+          </div>
+        </header>
+      )}
       <main className="mx-auto grid max-w-3xl gap-6 px-4 py-4 pb-16 md:grid-cols-[280px_1fr]">
-        <BottleImage src={wine.image} alt={`${wine.name}, ${wine.producer}`} />
+        <BottleImage
+          photoRef={photoRef}
+          src={wine.image}
+          alt={`${wine.name}, ${wine.producer}`}
+          showBack={photoOnScreen}
+        />
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <p className="text-base">
@@ -176,17 +204,32 @@ function TriChoice({
   );
 }
 
-function BottleImage({ src, alt }: { src: string; alt: string }) {
+function BottleImage({
+  src,
+  alt,
+  showBack,
+  photoRef,
+}: {
+  src: string;
+  alt: string;
+  showBack: boolean;
+  photoRef: Ref<HTMLDivElement>;
+}) {
   const [failed, setFailed] = useState(false);
   return (
-    <div className="relative flex h-72 items-center justify-center overflow-hidden rounded-2xl bg-[#14120f] md:h-[28rem]">
-      <Link
-        to="/"
-        aria-label="Nazad"
-        className="absolute top-3 left-3 z-10 flex size-11 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm lg:hidden"
-      >
-        <ArrowLeft aria-hidden="true" className="size-5" />
-      </Link>
+    <div
+      ref={photoRef}
+      className="relative flex h-72 items-center justify-center overflow-hidden rounded-2xl bg-[#14120f] md:h-[28rem]"
+    >
+      {showBack ? (
+        <Link
+          to="/"
+          aria-label="Nazad"
+          className="absolute top-3 left-3 z-10 flex size-11 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm"
+        >
+          <ArrowLeft aria-hidden="true" className="size-5" />
+        </Link>
+      ) : null}
       {failed ? (
         <p className="px-4 text-center text-base text-white">Slika nije učitana</p>
       ) : (
