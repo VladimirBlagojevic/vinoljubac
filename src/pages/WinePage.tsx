@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -37,7 +38,7 @@ export function WinePage() {
 
   return (
     <div className="min-h-svh">
-      <header className="sticky top-0 z-20 border-b border-border bg-background">
+      <header className="sticky top-0 z-20 hidden border-b border-border bg-background lg:block">
         <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3">
           <Link to="/" className={cn(buttonVariants({ variant: "outline" }), "shrink-0")}>
             Nazad
@@ -178,7 +179,14 @@ function TriChoice({
 function BottleImage({ src, alt }: { src: string; alt: string }) {
   const [failed, setFailed] = useState(false);
   return (
-    <div className="flex h-72 items-center justify-center overflow-hidden rounded-2xl bg-[#14120f] md:h-[28rem]">
+    <div className="relative flex h-72 items-center justify-center overflow-hidden rounded-2xl bg-[#14120f] md:h-[28rem]">
+      <Link
+        to="/"
+        aria-label="Nazad"
+        className="absolute top-3 left-3 z-10 flex size-11 items-center justify-center rounded-full border border-border bg-background text-foreground shadow-sm lg:hidden"
+      >
+        <ArrowLeft aria-hidden="true" className="size-5" />
+      </Link>
       {failed ? (
         <p className="px-4 text-center text-base text-white">Slika nije učitana</p>
       ) : (
