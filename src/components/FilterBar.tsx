@@ -1,4 +1,5 @@
 import { Download } from "lucide-react";
+import { useSyncExternalStore } from "react";
 
 import { Input } from "./ui/input";
 import { Button, buttonVariants } from "./ui/button";
@@ -23,6 +24,20 @@ const GROUP_OPTIONS: { id: GroupMode; label: string }[] = [
   { id: "shop", label: "Po radnji" },
   { id: "grape", label: "Po sorti" },
 ];
+
+function useDesktop() {
+  return useSyncExternalStore(subscribeDesktop, desktopMatches, () => false);
+}
+
+function subscribeDesktop(onChange: () => void) {
+  const query = window.matchMedia("(min-width: 1024px)");
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+function desktopMatches() {
+  return window.matchMedia("(min-width: 1024px)").matches;
+}
 
 function toggleValue<T extends string>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
@@ -57,6 +72,7 @@ export function FilterBar({
   onReset: () => void;
 }) {
   const activeCount = activeFilterCount(filters);
+  const desktop = useDesktop();
 
   return (
     <div className="sticky top-0 z-20 border-b border-border bg-background">
@@ -73,7 +89,16 @@ export function FilterBar({
           </p>
         </div>
         <p className="text-sm font-medium text-muted-foreground">
-          17. oktobar 2026. · Fabrika Events · 12–18h
+          17. oktobar 2026. ·{" "}
+          <a
+            href="https://maps.app.goo.gl/bxyFcHJ3SH17btK98"
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2"
+          >
+            Fabrika Events
+          </a>
+          {" "}· 12–18h
         </p>
         <div
           className="h-1.5 overflow-hidden rounded-full bg-foreground/15"
@@ -111,8 +136,12 @@ export function FilterBar({
               ) : null}
             </SheetTrigger>
             <SheetContent
-              side="bottom"
-              className="max-h-[80vh] gap-0 overflow-hidden rounded-t-2xl p-0 text-base"
+              side={desktop ? "right" : "bottom"}
+              className={
+                desktop
+                  ? "h-full w-full gap-0 overflow-hidden p-0 text-base data-[side=right]:w-full data-[side=right]:max-w-md data-[side=right]:sm:max-w-md"
+                  : "max-h-[80vh] gap-0 overflow-hidden rounded-t-2xl p-0 text-base"
+              }
             >
               <SheetHeader className="border-b border-border pr-12">
                 <SheetTitle className="text-xl">Filteri</SheetTitle>

@@ -77,7 +77,7 @@ export function WinePage() {
             href={wine.vivinoUrl}
             target="_blank"
             rel="noreferrer"
-            className={cn(buttonVariants({ size: "lg" }), "w-full")}
+            className={cn(buttonVariants(), "w-full")}
           >
             Otvori na Vivinu
           </a>
@@ -127,7 +127,7 @@ export function WinePage() {
               : "Čim označiš utisak ili upišeš belešku, vino ulazi u probana."}
           </p>
           {tasted ? (
-            <Button type="button" variant="outline" onClick={() => tasting.clearNote(wine.id)}>
+            <Button type="button" variant="outline" className="h-10" onClick={() => tasting.clearNote(wine.id)}>
               Poništi utisak i belešku
             </Button>
           ) : null}
@@ -163,7 +163,6 @@ function TriChoice({
           <Button
             key={option.text}
             type="button"
-            size="lg"
             variant={value === option.id ? "default" : "outline"}
             aria-pressed={value === option.id}
             onClick={() => onChange(option.id)}
