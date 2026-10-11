@@ -117,27 +117,6 @@
     --sidebar-ring: oklch(0.556 0 0);
 }
 
-[data-theme="papir"] {
-    --background: oklch(0.94 0.03 88);
-    --foreground: oklch(0.18 0.03 40);
-    --card: oklch(0.975 0.018 92);
-    --card-foreground: oklch(0.18 0.03 40);
-    --popover: oklch(0.975 0.018 92);
-    --popover-foreground: oklch(0.18 0.03 40);
-    --primary: oklch(0.4 0.14 22);
-    --primary-foreground: oklch(0.98 0.01 90);
-    --secondary: oklch(0.9 0.028 86);
-    --secondary-foreground: oklch(0.2 0.03 40);
-    --muted: oklch(0.89 0.025 86);
-    --muted-foreground: oklch(0.32 0.03 42);
-    --accent: oklch(0.9 0.03 80);
-    --accent-foreground: oklch(0.2 0.03 40);
-    --destructive: oklch(0.48 0.17 25);
-    --border: oklch(0.76 0.035 75);
-    --input: oklch(0.7 0.03 70);
-    --ring: oklch(0.42 0.12 22);
-}
-
 [data-theme="tamno"] {
     --background: oklch(0.2 0.02 40);
     --foreground: oklch(0.97 0.01 90);

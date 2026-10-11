@@ -9,7 +9,7 @@ export function TypeMarks({ wine }: { wine: Wine }) {
       {wineTags(wine).map((tag) => (
         <li key={tag}>
           <Badge
-            className={`h-8 border px-3 text-sm font-semibold ${TYPE_CLASS[tag]}`}
+            className={`h-7 border px-2.5 text-xs font-semibold ${TYPE_CLASS[tag]}`}
           >
             {TYPE_LABEL[tag]}
           </Badge>

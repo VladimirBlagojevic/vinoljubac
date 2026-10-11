@@ -109,7 +109,7 @@ export function ListPage() {
                   · {group.wines.length}
                 </span>
               </h2>
-              <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ul className="grid grid-cols-1 gap-3 lg:grid-cols-3">
                 {group.wines.map((wine) => (
                   <li key={`${group.id}-${wine.id}`}>
                     <WineCard wine={wine} note={tasting.notes[wine.id]} />

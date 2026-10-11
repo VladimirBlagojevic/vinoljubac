@@ -6,8 +6,10 @@
       (function () {
         try {
           var theme = localStorage.getItem("vinoljubac-theme");
-          if (theme === "svetlo" || theme === "papir" || theme === "tamno") {
-            document.documentElement.setAttribute("data-theme", theme);
+          if (theme === "tamno") {
+            document.documentElement.setAttribute("data-theme", "tamno");
+          } else if (theme === "svetlo" || theme === "papir") {
+            document.documentElement.setAttribute("data-theme", "svetlo");
           }
         } catch (e) {}
       })();

@@ -24,7 +24,7 @@ export function WinePage() {
   if (!wine) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="text-2xl font-semibold">Ovo vino nije na listi salona.</h1>
+        <h1 className="text-xl font-semibold">Ovo vino nije na listi salona.</h1>
         <Link to="/" className={cn(buttonVariants(), "mt-6")}>
           Nazad na listu
         </Link>
@@ -48,14 +48,14 @@ export function WinePage() {
         <BottleImage src={wine.image} alt={`${wine.name}, ${wine.producer}`} />
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <p className="text-lg">
+            <p className="text-base">
               {wine.flag} {wine.country}
             </p>
-            <h1 className="text-3xl leading-tight font-semibold tracking-tight">{wine.name}</h1>
-            <p className="text-xl">{wine.producer}</p>
+            <h1 className="text-2xl leading-tight font-semibold tracking-tight">{wine.name}</h1>
+            <p className="text-lg">{wine.producer}</p>
             <TypeMarks wine={wine} />
           </div>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-lg">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-base">
             <dt className="text-muted-foreground">Cena</dt>
             <dd className="font-semibold">{formatPrice(wine.priceRsd)}</dd>
             <dt className="text-muted-foreground">Radnja</dt>
@@ -82,7 +82,7 @@ export function WinePage() {
             Otvori na Vivinu
           </a>
           {wine.vivinoUncertain ? (
-            <p className="rounded-xl border border-[#9a3412] bg-[#fde0c2] p-4 text-base leading-snug text-[#7c2d12]">
+            <p className="rounded-xl border border-[#9a3412] bg-[#fde0c2] p-4 text-sm leading-snug text-[#7c2d12]">
               Link je najbliža prava stranica vina na Vivinu. Proveri da li je to baš ovo
               vino pre nego što čitaš ocene.
             </p>
@@ -99,9 +99,9 @@ export function WinePage() {
           />
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-lg font-semibold">Beleška</span>
+              <span className="text-base font-semibold">Beleška</span>
               <label className="flex items-center gap-2">
-                <span className="text-base font-semibold">Berba</span>
+                <span className="text-sm font-semibold">Berba</span>
                 <Input
                   value={note.year}
                   inputMode="numeric"
@@ -121,7 +121,7 @@ export function WinePage() {
               maxLength={500}
             />
           </div>
-          <p className="text-base leading-snug text-muted-foreground">
+          <p className="text-sm leading-snug text-muted-foreground">
             {tasted
               ? "Vino je zabeleženo na ovom telefonu."
               : "Čim označiš utisak ili upišeš belešku, vino ulazi u probana."}
@@ -157,7 +157,7 @@ function TriChoice({
 
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="text-lg font-semibold">{label}</legend>
+      <legend className="text-base font-semibold">{label}</legend>
       <div className="grid grid-cols-3 gap-2">
         {options.map((option) => (
           <Button

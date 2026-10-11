@@ -41,11 +41,11 @@ export function WineCard({
           )}
         </div>
       </Link>
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col gap-1.5 p-3">
         <div className="flex items-center justify-between gap-3">
           <Link
             to={`/vino/${wine.id}`}
-            className="min-w-0 text-sm font-medium text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring"
+            className="min-w-0 text-xs font-medium text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring"
           >
             {wine.flag} {wine.country}
           </Link>
@@ -64,11 +64,11 @@ export function WineCard({
           to={`/vino/${wine.id}`}
           className="flex flex-1 flex-col gap-2 focus-visible:ring-3 focus-visible:ring-ring"
         >
-          <h2 className="text-2xl leading-tight font-semibold tracking-tight">{wine.name}</h2>
-          <p className="text-lg leading-snug">{wine.producer}</p>
-          {wine.grape ? <p className="text-base leading-snug">{wine.grape}</p> : null}
+          <h2 className="text-xl leading-tight font-semibold tracking-tight">{wine.name}</h2>
+          <p className="text-base leading-snug">{wine.producer}</p>
+          {wine.grape ? <p className="text-sm leading-snug">{wine.grape}</p> : null}
           <TypeMarks wine={wine} />
-          <p className="text-lg font-semibold">{formatPrice(wine.priceRsd)}</p>
+          <p className="text-base font-semibold">{formatPrice(wine.priceRsd)}</p>
           {tasted ? (
             <p className="mt-auto flex flex-wrap gap-2 pt-1 text-sm font-semibold">
               {hasImpression ? (

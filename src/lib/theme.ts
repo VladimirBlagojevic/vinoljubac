@@ -1,8 +1,7 @@
-export type ThemeName = "svetlo" | "papir" | "tamno";
+export type ThemeName = "svetlo" | "tamno";
 
 export const THEMES: { id: ThemeName; label: string }[] = [
   { id: "svetlo", label: "Svetlo" },
-  { id: "papir", label: "Papir" },
   { id: "tamno", label: "Tamno" },
 ];
 
@@ -15,7 +14,7 @@ function readStoredTheme(): ThemeName {
   if (typeof localStorage === "undefined") return "svetlo";
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw === "papir" || raw === "tamno" || raw === "svetlo") return raw;
+    if (raw === "tamno" || raw === "svetlo") return raw;
   } catch {
     return "svetlo";
   }
