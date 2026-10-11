@@ -118,7 +118,6 @@ export function WinePage() {
             <Textarea
               value={note.note}
               onChange={(event) => tasting.setNote(wine.id, event.target.value)}
-              placeholder="Kratko, dok držiš čašu."
               maxLength={500}
             />
           </div>

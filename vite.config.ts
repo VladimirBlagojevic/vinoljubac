@@ -11,7 +11,16 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: "auto",
-      includeAssets: ["favicon.svg", "icons/icon-192.png", "icons/icon-512.png"],
+      includeAssets: [
+        "favicon-assets/favicon.ico",
+        "favicon-assets/favicon-16x16.png",
+        "favicon-assets/favicon-32x32.png",
+        "favicon-assets/apple-touch-icon.png",
+        "favicon-assets/pwa-192x192.png",
+        "favicon-assets/pwa-512x512.png",
+        "favicon-assets/pwa-maskable-192x192.png",
+        "favicon-assets/pwa-maskable-512x512.png",
+      ],
       manifest: {
         name: "Vinoljubac — Put oko Sveta",
         short_name: "Vinoljubac",
@@ -25,17 +34,25 @@ export default defineConfig({
         theme_color: "#f4efe6",
         icons: [
           {
-            src: "/icons/icon-192.png",
+            src: "/favicon-assets/pwa-192x192.png",
             sizes: "192x192",
             type: "image/png",
+            purpose: "any",
           },
           {
-            src: "/icons/icon-512.png",
+            src: "/favicon-assets/pwa-512x512.png",
             sizes: "512x512",
             type: "image/png",
+            purpose: "any",
           },
           {
-            src: "/icons/icon-512.png",
+            src: "/favicon-assets/pwa-maskable-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable",
+          },
+          {
+            src: "/favicon-assets/pwa-maskable-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
@@ -43,7 +60,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,webmanifest,woff2}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,webmanifest,woff2}"],
         navigateFallback: "/index.html",
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
       },

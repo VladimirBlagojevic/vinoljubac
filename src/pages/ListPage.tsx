@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { TYPE_ORDER } from "@/lib/wine-labels";
 import { useTasting } from "@/tasting-context";
 import { WineCard } from "@/components/WineCard";
-import { FilterBar, type Panel } from "@/components/FilterBar";
+import { FilterBar } from "@/components/FilterBar";
 import { countries, shops, wines, type TypeTag } from "@/data/wines";
 import { EMPTY_FILTERS, filtersAreNarrow, groupWines, wineMatches, type Filters, type GroupMode, type ViewMode } from "@/lib/catalog";
 
@@ -47,7 +47,6 @@ function readFilters(): Filters {
 export function ListPage() {
   const tasting = useTasting();
   const [filters, setFilters] = useState<Filters>(readFilters);
-  const [panel, setPanel] = useState<Panel>(null);
 
   useEffect(() => {
     localStorage.setItem(FILTER_KEY, JSON.stringify(filters));
@@ -82,14 +81,9 @@ export function ListPage() {
         loggedCount={tasting.loggedCount}
         total={wines.length}
         shown={visible.length}
-        panel={panel}
-        onPanel={setPanel}
         onChange={setFilters}
         onExport={tasting.exportNotes}
-        onReset={() => {
-          setFilters({ ...EMPTY_FILTERS, group: filters.group });
-          setPanel(null);
-        }}
+        onReset={() => setFilters({ ...EMPTY_FILTERS, group: filters.group })}
       />
       <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-4 pb-12">
         {visible.length === 0 ? (
