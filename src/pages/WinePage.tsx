@@ -18,21 +18,27 @@ export function WinePage() {
   const wine = wines.find((item) => item.id === id);
   const tasting = useTasting();
   const photoRef = useRef<HTMLDivElement>(null);
-  const [photoOnScreen, setPhotoOnScreen] = useState(true);
+  const [pastPhotoMiddle, setPastPhotoMiddle] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setPhotoOnScreen(true);
+    setPastPhotoMiddle(false);
   }, [id]);
 
   useEffect(() => {
     const node = photoRef.current;
     if (!node) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      setPhotoOnScreen(entry.isIntersecting);
-    });
-    observer.observe(node);
-    return () => observer.disconnect();
+    const update = () => {
+      const rect = node.getBoundingClientRect();
+      setPastPhotoMiddle(rect.top + rect.height / 2 <= 0);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, [id]);
 
   if (!wine) {
@@ -51,7 +57,7 @@ export function WinePage() {
 
   return (
     <div className="min-h-svh">
-      {photoOnScreen ? null : (
+      {pastPhotoMiddle ? (
         <header className="fixed inset-x-0 top-0 z-30 border-b border-border bg-background">
           <div className="mx-auto flex max-w-3xl items-center gap-3 px-3 py-2">
             <Link
@@ -67,13 +73,13 @@ export function WinePage() {
             </div>
           </div>
         </header>
-      )}
+      ) : null}
       <main className="mx-auto grid max-w-3xl gap-6 px-4 py-4 pb-16 md:grid-cols-[280px_1fr]">
         <BottleImage
           photoRef={photoRef}
           src={wine.image}
           alt={`${wine.name}, ${wine.producer}`}
-          showBack={photoOnScreen}
+          showBack={!pastPhotoMiddle}
         />
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
