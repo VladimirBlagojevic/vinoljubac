@@ -43,12 +43,17 @@ export function WineCard({
       </Link>
       <div className="flex flex-1 flex-col gap-1.5 p-3">
         <div className="flex items-center justify-between gap-3">
-          <Link
-            to={`/vino/${wine.id}`}
-            className="min-w-0 text-xs font-medium text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring"
-          >
-            {wine.flag} {wine.country}
-          </Link>
+          <div className="flex min-w-0 items-baseline gap-2">
+            <Link
+              to={`/vino/${wine.id}`}
+              className="min-w-0 text-xs font-medium text-muted-foreground focus-visible:ring-3 focus-visible:ring-ring"
+            >
+              {wine.flag} {wine.country}
+            </Link>
+            {wine.stand ? (
+              <span className="shrink-0 text-xs text-muted-foreground">{wine.stand}</span>
+            ) : null}
+          </div>
           <a
             href={wine.vivinoUrl}
             target="_blank"
@@ -66,6 +71,9 @@ export function WineCard({
         >
           <h2 className="text-xl leading-tight font-semibold tracking-tight">{wine.name}</h2>
           <p className="text-base leading-snug">{wine.producer}</p>
+          {wine.vintage ? (
+            <p className="text-sm leading-snug text-muted-foreground">Berba {wine.vintage}</p>
+          ) : null}
           {wine.grape ? <p className="text-sm leading-snug">{wine.grape}</p> : null}
           <TypeMarks wine={wine} />
           <p className="text-base font-semibold">{formatPrice(wine.priceRsd)}</p>

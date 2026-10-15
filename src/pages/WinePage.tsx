@@ -2,7 +2,6 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useRef, useState, type Ref } from "react";
 
-import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Button, buttonVariants } from "../components/ui/button";
 
@@ -85,12 +84,21 @@ export function WinePage() {
           <div className="flex flex-col gap-2">
             <p className="text-base">
               {wine.flag} {wine.country}
+              {wine.stand ? (
+                <span className="ml-2 text-sm text-muted-foreground">{wine.stand}</span>
+              ) : null}
             </p>
             <h1 className="text-2xl leading-tight font-semibold tracking-tight">{wine.name}</h1>
             <p className="text-lg">{wine.producer}</p>
             <TypeMarks wine={wine} />
           </div>
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-base">
+            {wine.vintage ? (
+              <>
+                <dt className="text-muted-foreground">Berba</dt>
+                <dd className="font-semibold">{wine.vintage}</dd>
+              </>
+            ) : null}
             <dt className="text-muted-foreground">Cena</dt>
             <dd className="font-semibold">{formatPrice(wine.priceRsd)}</dd>
             <dt className="text-muted-foreground">Radnja</dt>
@@ -108,6 +116,9 @@ export function WinePage() {
               </>
             ) : null}
           </dl>
+          {wine.description ? (
+            <p className="text-sm leading-relaxed">{wine.description}</p>
+          ) : null}
           <a
             href={wine.vivinoUrl}
             target="_blank"
@@ -133,23 +144,7 @@ export function WinePage() {
             onChange={(again) => tasting.setAgain(wine.id, again)}
           />
           <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-base font-semibold">Beleška</span>
-              <label className="flex items-center gap-2">
-                <span className="text-sm font-semibold">Berba</span>
-                <Input
-                  value={note.year}
-                  inputMode="numeric"
-                  maxLength={4}
-                  aria-label="Berba"
-                  placeholder="godina"
-                  className="h-11 w-24"
-                  onChange={(event) =>
-                    tasting.setYear(wine.id, event.target.value.replace(/\D/g, "").slice(0, 4))
-                  }
-                />
-              </label>
-            </div>
+            <span className="text-base font-semibold">Beleška</span>
             <Textarea
               value={note.note}
               onChange={(event) => tasting.setNote(wine.id, event.target.value)}

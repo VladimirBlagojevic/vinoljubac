@@ -10,7 +10,6 @@ type TastingContextValue = {
   setLiked: (id: string, liked: Answer) => void;
   setAgain: (id: string, again: Answer) => void;
   setNote: (id: string, note: string) => void;
-  setYear: (id: string, year: string) => void;
   clearNote: (id: string) => void;
   exportNotes: () => void;
 };
@@ -40,7 +39,6 @@ export function TastingProvider({ children }: { children: ReactNode }) {
       setLiked: (id, liked) => update(id, { liked }),
       setAgain: (id, again) => update(id, { again }),
       setNote: (id, note) => update(id, { note }),
-      setYear: (id, year) => update(id, { year }),
       clearNote: (id) =>
         setNotes((current) => {
           if (!current[id]) return current;

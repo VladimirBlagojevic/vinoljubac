@@ -7,14 +7,12 @@ export type TastingNote = {
   liked: Answer;
   again: Answer;
   note: string;
-  year: string;
 };
 
 export const EMPTY_NOTE: TastingNote = {
   liked: null,
   again: null,
   note: "",
-  year: "",
 };
 
 const STORAGE_KEY = "vinoljubac-put-oko-sveta-vol-3";
@@ -28,8 +26,7 @@ export function isTasted(note: TastingNote | undefined): boolean {
   return (
     note.liked !== null ||
     note.again !== null ||
-    note.note.trim().length > 0 ||
-    note.year.trim().length > 0
+    note.note.trim().length > 0
   );
 }
 
@@ -44,12 +41,13 @@ export function loadNotes(): Record<string, TastingNote> {
     for (const [id, value] of Object.entries(parsed)) {
       if (!value || typeof value !== "object") continue;
       const record = value as Partial<TastingNote>;
-      notes[id] = {
+      const note: TastingNote = {
         liked: isAnswer(record.liked) ? record.liked : null,
         again: isAnswer(record.again) ? record.again : null,
         note: typeof record.note === "string" ? record.note : "",
-        year: typeof record.year === "string" ? record.year : "",
       };
+      if (!isTasted(note)) continue;
+      notes[id] = note;
     }
     return notes;
   } catch {
@@ -84,7 +82,7 @@ export function buildNotesText(
     lines.push(
       `${wine.flag} ${wine.country} · ${formatPrice(wine.priceRsd)} · ${wine.shop}`,
     );
-    if (note.year.trim()) lines.push(`Berba: ${note.year.trim()}`);
+    if (wine.vintage) lines.push(`Berba: ${wine.vintage}`);
     if (note.liked) lines.push(`Svidelo mi se: ${note.liked}`);
     if (note.again) lines.push(`Pio bih ponovo: ${note.again}`);
     if (note.note.trim()) lines.push(`Beleška: ${note.note.trim()}`);
@@ -116,6 +114,8 @@ export function wineHaystack(wine: Wine): string {
       wine.country,
       wine.shop,
       wine.region ?? "",
+      wine.stand ?? "",
+      wine.vintage ? String(wine.vintage) : "",
     ].join(" "),
   );
 }
