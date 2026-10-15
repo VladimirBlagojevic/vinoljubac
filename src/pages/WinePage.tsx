@@ -99,8 +99,12 @@ export function WinePage() {
                 <dd className="font-semibold">{wine.vintage}</dd>
               </>
             ) : null}
-            <dt className="text-muted-foreground">Cena</dt>
-            <dd className="font-semibold">{formatPrice(wine.priceRsd)}</dd>
+            {wine.priceRsd != null ? (
+              <>
+                <dt className="text-muted-foreground">Cena</dt>
+                <dd className="font-semibold">{formatPrice(wine.priceRsd)}</dd>
+              </>
+            ) : null}
             <dt className="text-muted-foreground">Radnja</dt>
             <dd>{wine.shop}</dd>
             {wine.grape ? (
@@ -119,14 +123,16 @@ export function WinePage() {
           {wine.description ? (
             <p className="text-sm leading-relaxed">{wine.description}</p>
           ) : null}
-          <a
-            href={wine.vivinoUrl}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(buttonVariants(), "w-full")}
-          >
-            Otvori na Vivinu
-          </a>
+          {wine.vivinoUrl ? (
+            <a
+              href={wine.vivinoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(buttonVariants(), "w-full")}
+            >
+              {wine.linkLabel === "IWSC" ? "Otvori na IWSC" : "Otvori na Vivinu"}
+            </a>
+          ) : null}
           {wine.vivinoUncertain ? (
             <p className="rounded-xl border border-[#9a3412] bg-[#fde0c2] p-4 text-sm leading-snug text-[#7c2d12]">
               Link je najbliža prava stranica vina na Vivinu. Proveri da li je to baš ovo
@@ -211,7 +217,7 @@ function BottleImage({
   showBack,
   photoRef,
 }: {
-  src: string;
+  src: string | null;
   alt: string;
   showBack: boolean;
   photoRef: Ref<HTMLDivElement>;
@@ -231,8 +237,10 @@ function BottleImage({
           <ArrowLeft aria-hidden="true" className="size-5" />
         </Link>
       ) : null}
-      {failed ? (
-        <p className="px-4 text-center text-base text-white">Slika nije učitana</p>
+      {!src || failed ? (
+        <p className="px-4 text-center text-base text-white">
+          {src ? "Slika nije učitana" : "Nema fotografije boce"}
+        </p>
       ) : (
         <img
           src={src}

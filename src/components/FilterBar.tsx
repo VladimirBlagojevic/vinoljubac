@@ -7,9 +7,9 @@ import { SheetContent, SheetFooter, SheetHeader } from "./ui/sheet";
 import { Sheet, SheetClose, SheetTitle, SheetTrigger } from "./ui/sheet";
 
 import { cn } from "@/lib/utils";
+import type { RotationId } from "@/data/rotations";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import type { Filters, GroupMode, ViewMode } from "@/lib/catalog";
-import { TYPE_LABEL, TYPE_ORDER, TYPE_STYLE } from "@/lib/wine-labels";
 
 const VIEW_OPTIONS: { id: ViewMode; label: string }[] = [
   { id: "all", label: "Sva vina" },
@@ -17,11 +17,15 @@ const VIEW_OPTIONS: { id: ViewMode; label: string }[] = [
   { id: "notes", label: "Moje beleške" },
 ];
 
+const VERSION_OPTIONS: { id: RotationId; label: string }[] = [
+  { id: "v1", label: "Verzija 1" },
+  { id: "v2", label: "Verzija 2" },
+  { id: "v3", label: "Verzija 3" },
+];
+
 const GROUP_OPTIONS: { id: GroupMode; label: string }[] = [
-  { id: "site", label: "Redosled sa sajta" },
+  { id: "brochure", label: "Redosled po brošuri" },
   { id: "country", label: "Po zemlji" },
-  { id: "type", label: "Po vrsti" },
-  { id: "shop", label: "Po radnji" },
   { id: "grape", label: "Po sorti" },
 ];
 
@@ -44,16 +48,17 @@ function toggleValue<T extends string>(list: T[], value: T): T[] {
 }
 
 function activeFilterCount(filters: Filters): number {
-  let count = filters.tags.length + filters.countries.length + filters.shops.length;
+  let count = filters.countries.length;
   if (filters.view !== "all") count += 1;
-  if (filters.group !== "site") count += 1;
+  if (filters.version) count += 1;
+  else if (filters.group !== "brochure") count += 1;
+  if (filters.round) count += 1;
   return count;
 }
 
 export function FilterBar({
   filters,
   countries,
-  shops,
   loggedCount,
   total,
   shown,
@@ -63,7 +68,6 @@ export function FilterBar({
 }: {
   filters: Filters;
   countries: string[];
-  shops: string[];
   loggedCount: number;
   total: number;
   shown: number;
@@ -150,7 +154,6 @@ export function FilterBar({
                 <FilterControls
                   filters={filters}
                   countries={countries}
-                  shops={shops}
                   onChange={onChange}
                   onExport={onExport}
                 />
@@ -180,18 +183,62 @@ export function FilterBar({
 function FilterControls({
   filters,
   countries,
-  shops,
   onChange,
   onExport,
 }: {
   filters: Filters;
   countries: string[];
-  shops: string[];
   onChange: (filters: Filters) => void;
   onExport: () => void;
 }) {
   return (
     <>
+      <section className="flex flex-col gap-2">
+        <h2 className="text-base font-semibold">Verzija</h2>
+        <p className="text-sm leading-snug text-muted-foreground">
+          Tri rotacije, da ne idete svi istim putem. Svaka ima 6 krugova po 7 vina. Pratite
+          verziju koju ste dobili.
+        </p>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Verzija">
+          {VERSION_OPTIONS.map((option) => (
+            <Button
+              key={option.id}
+              type="button"
+              variant={filters.version === option.id ? "default" : "outline"}
+              aria-pressed={filters.version === option.id}
+              onClick={() =>
+                onChange({
+                  ...filters,
+                  version: filters.version === option.id ? null : option.id,
+                  round: null,
+                })
+              }
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
+        {filters.version ? (
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Krug">
+            {[1, 2, 3, 4, 5, 6].map((round) => (
+              <Button
+                key={round}
+                type="button"
+                variant={filters.round === round ? "default" : "outline"}
+                aria-pressed={filters.round === round}
+                onClick={() =>
+                  onChange({
+                    ...filters,
+                    round: filters.round === round ? null : round,
+                  })
+                }
+              >
+                Krug {round}
+              </Button>
+            ))}
+          </div>
+        ) : null}
+      </section>
       <section className="flex flex-col gap-2">
         <h2 className="text-base font-semibold">Lista</h2>
         <div className="flex flex-wrap gap-2">
@@ -209,28 +256,6 @@ function FilterControls({
           ))}
         </div>
       </section>
-      <section className="flex flex-col gap-2">
-        <h2 className="text-base font-semibold">Vrsta</h2>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Vrsta">
-          {TYPE_ORDER.map((tag) => {
-            const selected = filters.tags.includes(tag);
-            return (
-              <button
-                key={tag}
-                type="button"
-                aria-pressed={selected}
-                className={cn(buttonVariants({ variant: "outline" }), "shrink-0 rounded-full")}
-                style={selected ? TYPE_STYLE[tag] : undefined}
-                onClick={() =>
-                  onChange({ ...filters, tags: toggleValue(filters.tags, tag) })
-                }
-              >
-                {TYPE_LABEL[tag]}
-              </button>
-            );
-          })}
-        </div>
-      </section>
       <ChipSection
         legend="Zemlja"
         options={countries}
@@ -239,28 +264,25 @@ function FilterControls({
           onChange({ ...filters, countries: toggleValue(filters.countries, value) })
         }
       />
-      <ChipSection
-        legend="Radnja"
-        options={shops}
-        selected={filters.shops}
-        onToggle={(value) =>
-          onChange({ ...filters, shops: toggleValue(filters.shops, value) })
-        }
-      />
       <section className="flex flex-col gap-2">
         <h2 className="text-base font-semibold">Grupisanje</h2>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Grupisanje">
-          {GROUP_OPTIONS.map((option) => (
-            <Button
-              key={option.id}
-              type="button"
-              variant={filters.group === option.id ? "default" : "outline"}
-              aria-pressed={filters.group === option.id}
-              onClick={() => onChange({ ...filters, group: option.id })}
-            >
-              {option.label}
-            </Button>
-          ))}
+          {GROUP_OPTIONS.map((option) => {
+            const selected = filters.version == null && filters.group === option.id;
+            return (
+              <Button
+                key={option.id}
+                type="button"
+                variant={selected ? "default" : "outline"}
+                aria-pressed={selected}
+                onClick={() =>
+                  onChange({ ...filters, group: option.id, version: null, round: null })
+                }
+              >
+                {option.label}
+              </Button>
+            );
+          })}
         </div>
       </section>
       <Button type="button" variant="outline" onClick={onExport}>

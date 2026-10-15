@@ -1,28 +1,28 @@
 import { fold } from "@/lib/format";
-import { TYPE_LABEL, TYPE_ORDER } from "@/lib/wine-labels";
-import { wineTags, type TypeTag, type Wine } from "@/data/wines";
+import type { Wine } from "@/data/wines";
+import { ROTATIONS, type RotationId } from "@/data/rotations";
 import { isTasted, wineHaystack, type TastingNote } from "@/lib/tasting";
 
 export type ViewMode = "all" | "untasted" | "notes";
 
-export type GroupMode = "site" | "country" | "type" | "shop" | "grape";
+export type GroupMode = "brochure" | "country" | "grape";
 
 export type Filters = {
   query: string;
-  tags: TypeTag[];
   countries: string[];
-  shops: string[];
   view: ViewMode;
   group: GroupMode;
+  version: RotationId | null;
+  round: number | null;
 };
 
 export const EMPTY_FILTERS: Filters = {
   query: "",
-  tags: [],
   countries: [],
-  shops: [],
   view: "all",
-  group: "site",
+  group: "brochure",
+  version: null,
+  round: null,
 };
 
 export type WineGroup = {
@@ -58,27 +58,47 @@ export function wineMatches(
     if (!tokens.every((token) => haystack.includes(token))) return false;
   }
 
-  if (filters.tags.length > 0) {
-    const tags = wineTags(wine);
-    if (!filters.tags.some((tag) => tags.includes(tag))) return false;
-  }
-
   if (!includesAny(filters.countries, wine.country)) return false;
-  if (!includesAny(filters.shops, wine.shop)) return false;
+  if (filters.version && filters.round) {
+    const ids = ROTATIONS[filters.version][filters.round - 1];
+    if (!ids?.includes(wine.id)) return false;
+  }
   return true;
 }
 
-export function groupWines(list: Wine[], mode: GroupMode): WineGroup[] {
-  if (mode === "site") {
-    return [{ id: "site", title: "Redosled sa sajta", wines: list }];
+function isRotation(mode: GroupMode | RotationId): mode is RotationId {
+  return mode === "v1" || mode === "v2" || mode === "v3";
+}
+
+export function groupWines(
+  list: Wine[],
+  mode: GroupMode | RotationId,
+  round: number | null = null,
+): WineGroup[] {
+  if (isRotation(mode)) {
+    const byId = new Map(list.map((wine) => [wine.id, wine]));
+    const rounds = ROTATIONS[mode]
+      .map((ids, index) => ({
+        id: `krug-${index + 1}`,
+        title: `Krug ${index + 1}`,
+        wines: ids.flatMap((id) => {
+          const wine = byId.get(id);
+          return wine ? [wine] : [];
+        }),
+      }))
+      .filter((group) => group.wines.length > 0);
+    if (round == null) return rounds;
+    return rounds.filter((group) => group.id === `krug-${round}`);
   }
 
-  if (mode === "type") {
-    return TYPE_ORDER.map((tag) => ({
-      id: tag,
-      title: TYPE_LABEL[tag],
-      wines: list.filter((wine) => wineTags(wine).includes(tag)),
-    })).filter((group) => group.wines.length > 0);
+  if (mode === "brochure") {
+    return [
+      {
+        id: "brochure",
+        title: "Redosled po brošuri",
+        wines: [...list].sort((a, b) => a.order - b.order),
+      },
+    ];
   }
 
   if (mode === "grape") {
@@ -95,10 +115,9 @@ export function groupWines(list: Wine[], mode: GroupMode): WineGroup[] {
       .map(([title, items]) => ({ id: title, title, wines: items }));
   }
 
-  const keyOf = mode === "country" ? (wine: Wine) => wine.country : (wine: Wine) => wine.shop;
   const buckets = new Map<string, Wine[]>();
   for (const wine of list) {
-    const key = keyOf(wine);
+    const key = wine.country;
     const current = buckets.get(key);
     if (current) current.push(wine);
     else buckets.set(key, [wine]);
@@ -112,9 +131,7 @@ export function groupWines(list: Wine[], mode: GroupMode): WineGroup[] {
 export function filtersAreNarrow(filters: Filters): boolean {
   return (
     filters.query.trim().length > 0 ||
-    filters.tags.length > 0 ||
     filters.countries.length > 0 ||
-    filters.shops.length > 0 ||
     filters.view !== "all"
   );
 }

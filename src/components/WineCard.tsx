@@ -26,8 +26,10 @@ export function WineCard({
         className="focus-visible:ring-3 focus-visible:ring-ring"
       >
         <div className="flex h-56 items-center justify-center bg-[#14120f] sm:h-64">
-          {imageFailed ? (
-            <p className="px-4 text-center text-base text-white">Slika nije učitana</p>
+          {!wine.image || imageFailed ? (
+            <p className="px-4 text-center text-base text-white">
+              {wine.image ? "Slika nije učitana" : "Nema fotografije boce"}
+            </p>
           ) : (
             <img
               src={wine.image}
@@ -54,16 +56,18 @@ export function WineCard({
               <span className="shrink-0 text-xs text-muted-foreground">{wine.stand}</span>
             ) : null}
           </div>
-          <a
-            href={wine.vivinoUrl}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`Vivino: ${wine.name}`}
-            className="flex h-11 shrink-0 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-base font-semibold"
-          >
-            <Eye aria-hidden="true" className="size-5" />
-            Vivino
-          </a>
+          {wine.vivinoUrl ? (
+            <a
+              href={wine.vivinoUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`${wine.linkLabel ?? "Vivino"}: ${wine.name}`}
+              className="flex h-11 shrink-0 items-center gap-1.5 rounded-full border border-border bg-background px-3 text-base font-semibold"
+            >
+              <Eye aria-hidden="true" className="size-5" />
+              {wine.linkLabel ?? "Vivino"}
+            </a>
+          ) : null}
         </div>
         <Link
           to={`/vino/${wine.id}`}
@@ -76,7 +80,9 @@ export function WineCard({
           ) : null}
           {wine.grape ? <p className="text-sm leading-snug">{wine.grape}</p> : null}
           <TypeMarks wine={wine} />
-          <p className="text-base font-semibold">{formatPrice(wine.priceRsd)}</p>
+          {wine.priceRsd != null ? (
+            <p className="text-base font-semibold">{formatPrice(wine.priceRsd)}</p>
+          ) : null}
           {tasted ? (
             <p className="mt-auto flex flex-wrap gap-2 pt-1 text-sm font-semibold">
               {hasImpression ? (

@@ -11,9 +11,9 @@ export type Wine = {
   producer: string;
   country: string;
   flag: string;
-  priceRsd: number;
+  priceRsd: number | null;
   shop: string;
-  image: string;
+  image: string | null;
   grape: string | null;
   region: string | null;
   vintage: number | null;
@@ -22,13 +22,14 @@ export type Wine = {
   colors: WineColor[];
   sparkling: boolean;
   vivinoUrl: string;
+  linkLabel?: string;
   vivinoUncertain: boolean;
 };
 
 export const wines: Wine[] = [
   {
     id: "de-la-finca",
-    order: 1,
+    order: 4,
     name: "De La Finca",
     producer: "Raventós i Blanc",
     country: "Španija",
@@ -48,7 +49,7 @@ export const wines: Wine[] = [
   },
   {
     id: "rudi-pichler-gv",
-    order: 2,
+    order: 22,
     name: "Grüner Veltliner Terrassen Smaragd",
     producer: "Rudi Pichler",
     country: "Austrija",
@@ -68,7 +69,7 @@ export const wines: Wine[] = [
   },
   {
     id: "duckhorn-rutherford",
-    order: 3,
+    order: 42,
     name: "Napa Valley Cabernet Sauvignon",
     producer: "Duckhorn",
     country: "SAD",
@@ -88,7 +89,7 @@ export const wines: Wine[] = [
   },
   {
     id: "vietti-derthona",
-    order: 4,
+    order: 23,
     name: "Derthona Timorasso",
     producer: "Vietti",
     country: "Italija",
@@ -108,7 +109,7 @@ export const wines: Wine[] = [
   },
   {
     id: "carl-loewen-varidor",
-    order: 5,
+    order: 7,
     name: "Varidor Riesling",
     producer: "Weingut Carl Loewen",
     country: "Nemačka",
@@ -128,7 +129,7 @@ export const wines: Wine[] = [
   },
   {
     id: "zarate-albarino",
-    order: 6,
+    order: 9,
     name: "Albariño",
     producer: "Zarate",
     country: "Španija",
@@ -148,7 +149,7 @@ export const wines: Wine[] = [
   },
   {
     id: "terlan-terlaner",
-    order: 7,
+    order: 19,
     name: "Cuvee Terlaner",
     producer: "Cantina Terlan",
     country: "Italija",
@@ -168,7 +169,7 @@ export const wines: Wine[] = [
   },
   {
     id: "scavino-barolo",
-    order: 8,
+    order: 38,
     name: "Barolo Classico",
     producer: "Paolo Scavino",
     country: "Italija",
@@ -187,28 +188,30 @@ export const wines: Wine[] = [
     vivinoUncertain: false,
   },
   {
-    id: "june-sun",
-    order: 9,
-    name: "June Sun",
-    producer: "Georgian Sun, Vazisubani Estate",
+    id: "tsarapi",
+    order: 25,
+    name: "Tsarapi",
+    producer: "Ghvinobistve",
     country: "Gruzija",
     flag: "🇬🇪",
-    priceRsd: 1500,
+    priceRsd: null,
     shop: "Coral Wines",
-    image: "/wines/Georgian_Sun_June_Sun_Rkatsiteli_Mtsvane.png",
-    grape: "Rkatsiteli, Mtsvane Kakhuri",
-    region: null,
-    vintage: null,
-    stand: null,
-    description: null,
-    colors: ["belo"],
+    image: "/wines/Ghvinobistve_Tsarapi_Rkatsiteli_2024.jpg",
+    grape: "Rkatsiteli",
+    region: "Kaheti",
+    vintage: 2024,
+    stand: "S2",
+    description:
+      "Ghvinobistve je mala porodična marani u selu Kardenahi, u srcu Kahetije, koju vodi Tornike Nanobašvili. Ime je gruzijski naziv za oktobar, mesec berbe, kada se cela zemlja okuplja oko qvevra. Kuća radi tradicionalno, sa sortama koje se u tom selu gaje vekovima, a na međunarodnoj sceni se pojavila bronzanim medaljama na londonskom IWSC-u 2026. godine. Tsarapi nije ime vina nego mikrozona, jedna od najstrože definisanih gruzijskih apelacija: rkaciteli sme da se pravi isključivo u qvevri amforama, sa celim grozdom i kominom, i ostaje na kožici najmanje do prvog februara. Rezultat je oranž vino punog tela i baršunaste teksture, sa notama suve kajsije, oraha i crnog čaja, i sa taninom kakav se od belog grožđa ne očekuje.",
+    colors: ["narandzasto"],
     sparkling: false,
-    vivinoUrl: "https://www.vivino.com/w/12926767",
+    vivinoUrl: "https://iwsc.net/results/detail/167520/rkatsiteli-2024",
+    linkLabel: "IWSC",
     vivinoUncertain: false,
   },
   {
     id: "torre-ona-crianza",
-    order: 10,
+    order: 34,
     name: "Finca San Martín Crianza",
     producer: "Torre de Oña",
     country: "Španija",
@@ -228,7 +231,7 @@ export const wines: Wine[] = [
   },
   {
     id: "serol-eclat",
-    order: 11,
+    order: 27,
     name: "Éclat de Granite",
     producer: "Domaine Serol",
     country: "Francuska",
@@ -248,7 +251,7 @@ export const wines: Wine[] = [
   },
   {
     id: "harom-gracia",
-    order: 12,
+    order: 15,
     name: "3 Gracia Furmint & Hárslevelű",
     producer: "Bott Pince",
     country: "Mađarska",
@@ -268,7 +271,7 @@ export const wines: Wine[] = [
   },
   {
     id: "mann-sylvaner",
-    order: 13,
+    order: 14,
     name: "Mouton Bleu Sylvaner",
     producer: "Domaine Mann",
     country: "Francuska",
@@ -288,7 +291,7 @@ export const wines: Wine[] = [
   },
   {
     id: "la-magia-rosso",
-    order: 14,
+    order: 31,
     name: "Rosso di Montalcino",
     producer: "Fattoria La Magia",
     country: "Italija",
@@ -308,7 +311,7 @@ export const wines: Wine[] = [
   },
   {
     id: "dorli-muhr",
-    order: 15,
+    order: 30,
     name: "Prellenkirchen Samt & Seide Blaufränkisch",
     producer: "Weingut Dorli Muhr",
     country: "Austrija",
@@ -328,7 +331,7 @@ export const wines: Wine[] = [
   },
   {
     id: "aplauz-mavrud",
-    order: 16,
+    order: 39,
     name: "Aplauz Mavrud Reserve",
     producer: "Villa Melnik",
     country: "Bugarska",
@@ -348,7 +351,7 @@ export const wines: Wine[] = [
   },
   {
     id: "gal-tibor-kadarka",
-    order: 17,
+    order: 28,
     name: "Kadarka",
     producer: "Gál Tibor",
     country: "Mađarska",
@@ -368,7 +371,7 @@ export const wines: Wine[] = [
   },
   {
     id: "flama-dor",
-    order: 18,
+    order: 1,
     name: "Flama d’Or Cava Brut",
     producer: "Castell d’Or",
     country: "Španija",
@@ -388,7 +391,7 @@ export const wines: Wine[] = [
   },
   {
     id: "kuzubag-kalecik",
-    order: 19,
+    order: 29,
     name: "Kalecik Karası",
     producer: "Kuzubağ",
     country: "Turska",
@@ -408,7 +411,7 @@ export const wines: Wine[] = [
   },
   {
     id: "castell-in-villa",
-    order: 20,
+    order: 32,
     name: "Chianti Classico",
     producer: "Castell’in Villa",
     country: "Italija",
@@ -428,7 +431,7 @@ export const wines: Wine[] = [
   },
   {
     id: "alturis-sauvignon",
-    order: 21,
+    order: 13,
     name: "Sauvignon Blanc",
     producer: "Alturis",
     country: "Italija",
@@ -448,7 +451,7 @@ export const wines: Wine[] = [
   },
   {
     id: "kendall-jackson-zin",
-    order: 22,
+    order: 40,
     name: "Vintner’s Reserve Zinfandel",
     producer: "Kendall-Jackson",
     country: "SAD",
@@ -468,7 +471,7 @@ export const wines: Wine[] = [
   },
   {
     id: "tomtit-sb",
-    order: 23,
+    order: 5,
     name: "Tomtit Sauvignon Blanc",
     producer: "Les Grands Chais de France",
     country: "Novi Zeland",
@@ -488,7 +491,7 @@ export const wines: Wine[] = [
   },
   {
     id: "terroir-historic",
-    order: 24,
+    order: 33,
     name: "Terroir Històric",
     producer: "Terroir al Límit",
     country: "Španija",
@@ -508,7 +511,7 @@ export const wines: Wine[] = [
   },
   {
     id: "soalheiro-alvarinho",
-    order: 25,
+    order: 10,
     name: "Alvarinho Clássico",
     producer: "Soalheiro",
     country: "Portugal",
@@ -528,7 +531,7 @@ export const wines: Wine[] = [
   },
   {
     id: "simonsig-rose",
-    order: 26,
+    order: 3,
     name: "Kaapse Vonkel Brut Rosé",
     producer: "Simonsig",
     country: "Južna Afrika",
@@ -548,7 +551,7 @@ export const wines: Wine[] = [
   },
   {
     id: "ardea-rose",
-    order: 27,
+    order: 2,
     name: "Cava Ardea Rose Brut",
     producer: "U MES U",
     country: "Španija",
@@ -568,7 +571,7 @@ export const wines: Wine[] = [
   },
   {
     id: "lapostolle-carmenere",
-    order: 28,
+    order: 35,
     name: "Grand Selection Carmenere",
     producer: "Lapostolle",
     country: "Čile",
@@ -588,7 +591,7 @@ export const wines: Wine[] = [
   },
   {
     id: "rives-blanques",
-    order: 29,
+    order: 17,
     name: "Tres Pech Chardonnay",
     producer: "Chateau Rives-Blanques",
     country: "Francuska",
@@ -608,7 +611,7 @@ export const wines: Wine[] = [
   },
   {
     id: "gaba-do-xil",
-    order: 30,
+    order: 11,
     name: "Gaba do Xil Godello",
     producer: "Telmo Rodriguez",
     country: "Španija",
@@ -628,7 +631,7 @@ export const wines: Wine[] = [
   },
   {
     id: "la-crema-rrv",
-    order: 31,
+    order: 20,
     name: "Chardonnay Russian River Valley",
     producer: "La Crema",
     country: "SAD",
@@ -648,7 +651,7 @@ export const wines: Wine[] = [
   },
   {
     id: "trumpeter-malbec",
-    order: 32,
+    order: 37,
     name: "Trumpeter Malbec",
     producer: "Rutini",
     country: "Argentina",
@@ -668,7 +671,7 @@ export const wines: Wine[] = [
   },
   {
     id: "vie-di-romans",
-    order: 33,
+    order: 21,
     name: "Chardonnay",
     producer: "Vie di Romans",
     country: "Italija",
@@ -688,7 +691,7 @@ export const wines: Wine[] = [
   },
   {
     id: "rochemorin",
-    order: 34,
+    order: 36,
     name: "Château de Rochemorin Rouge",
     producer: "André Lurton",
     country: "Francuska",
@@ -708,7 +711,7 @@ export const wines: Wine[] = [
   },
   {
     id: "zorah-voski",
-    order: 35,
+    order: 18,
     name: "Voski",
     producer: "Zorah",
     country: "Jermenija",
@@ -728,7 +731,7 @@ export const wines: Wine[] = [
   },
   {
     id: "purcari-nocturne",
-    order: 36,
+    order: 24,
     name: "Orange de Purcari Nocturne",
     producer: "Château Purcari",
     country: "Moldavija",
@@ -748,7 +751,7 @@ export const wines: Wine[] = [
   },
   {
     id: "villa-maria-pb",
-    order: 37,
+    order: 6,
     name: "PB Organic Sauvignon Blanc",
     producer: "Villa Maria",
     country: "Novi Zeland",
@@ -768,7 +771,7 @@ export const wines: Wine[] = [
   },
   {
     id: "umani-pecorino",
-    order: 38,
+    order: 8,
     name: "Pecorino Vellodoro",
     producer: "Umani Ronchi",
     country: "Italija",
@@ -788,7 +791,7 @@ export const wines: Wine[] = [
   },
   {
     id: "pieropan-calvarino",
-    order: 39,
+    order: 12,
     name: "Calvarino Soave Classico",
     producer: "Pieropan",
     country: "Italija",
@@ -808,7 +811,7 @@ export const wines: Wine[] = [
   },
   {
     id: "pasqua-pinot",
-    order: 40,
+    order: 26,
     name: "Pinot Noir Edizione 1",
     producer: "Smith + Pasqua",
     country: "Italija",
@@ -828,7 +831,7 @@ export const wines: Wine[] = [
   },
   {
     id: "lugny-eugene",
-    order: 41,
+    order: 16,
     name: "Mâcon-Lugny Eugene Blanc",
     producer: "Cave de Lugny",
     country: "Francuska",
@@ -848,7 +851,7 @@ export const wines: Wine[] = [
   },
   {
     id: "pasqua-desire",
-    order: 42,
+    order: 41,
     name: "Desire Lush & Primitivo",
     producer: "Pasqua",
     country: "Italija",

@@ -1,21 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { TYPE_ORDER } from "@/lib/wine-labels";
 import { useTasting } from "@/tasting-context";
+import { countries, wines } from "@/data/wines";
 import { WineCard } from "@/components/WineCard";
 import { FilterBar } from "@/components/FilterBar";
-import { countries, shops, wines, type TypeTag } from "@/data/wines";
+import type { RotationId } from "@/data/rotations";
 import { EMPTY_FILTERS, filtersAreNarrow, groupWines, wineMatches, type Filters, type GroupMode, type ViewMode } from "@/lib/catalog";
 
 const FILTER_KEY = "vinoljubac-list-filters";
 const SCROLL_KEY = "vinoljubac-list-scroll";
 
 const VIEWS: ViewMode[] = ["all", "untasted", "notes"];
-const GROUPS: GroupMode[] = ["site", "country", "type", "shop", "grape"];
-
-function isTypeTag(value: unknown): value is TypeTag {
-  return typeof value === "string" && TYPE_ORDER.includes(value as TypeTag);
-}
+const VERSIONS: RotationId[] = ["v1", "v2", "v3"];
 
 function readFilters(): Filters {
   if (typeof localStorage === "undefined") return EMPTY_FILTERS;
@@ -24,20 +20,35 @@ function readFilters(): Filters {
     if (!raw) return EMPTY_FILTERS;
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return EMPTY_FILTERS;
-    const record = parsed as Partial<Filters>;
+    const record = parsed as {
+      query?: unknown;
+      countries?: unknown;
+      view?: unknown;
+      group?: unknown;
+      version?: unknown;
+      round?: unknown;
+    };
+    const storedGroup = typeof record.group === "string" ? record.group : "";
+    let version: RotationId | null = VERSIONS.includes(record.version as RotationId)
+      ? (record.version as RotationId)
+      : null;
+    let group: GroupMode = "brochure";
+    if (storedGroup === "v1" || storedGroup === "v2" || storedGroup === "v3") {
+      version = version ?? storedGroup;
+    } else if (storedGroup === "country" || storedGroup === "grape" || storedGroup === "brochure") {
+      group = storedGroup;
+    }
     return {
       query: typeof record.query === "string" ? record.query : "",
-      tags: Array.isArray(record.tags) ? record.tags.filter(isTypeTag) : [],
       countries: Array.isArray(record.countries)
         ? record.countries.filter((item): item is string => countries.includes(item))
         : [],
-      shops: Array.isArray(record.shops)
-        ? record.shops.filter((item): item is string => shops.includes(item))
-        : [],
       view: VIEWS.includes(record.view as ViewMode) ? (record.view as ViewMode) : "all",
-      group: GROUPS.includes(record.group as GroupMode)
-        ? (record.group as GroupMode)
-        : "site",
+      group,
+      version,
+      round: version && typeof record.round === "number" && record.round >= 1 && record.round <= 6
+        ? record.round
+        : null,
     };
   } catch {
     return EMPTY_FILTERS;
@@ -66,8 +77,8 @@ export function ListPage() {
     [filters, tasting.notes],
   );
   const groups = useMemo(
-    () => groupWines(visible, filters.group),
-    [filters.group, visible],
+    () => groupWines(visible, filters.version ?? filters.group, filters.round),
+    [filters.group, filters.round, filters.version, visible],
   );
 
   const emptyMessage = emptyCopy(filters, tasting.loggedCount);
@@ -77,7 +88,6 @@ export function ListPage() {
       <FilterBar
         filters={filters}
         countries={countries}
-        shops={shops}
         loggedCount={tasting.loggedCount}
         total={wines.length}
         shown={visible.length}

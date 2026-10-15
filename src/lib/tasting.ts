@@ -80,7 +80,13 @@ export function buildNotesText(
     lines.push(`${wine.order}. ${wine.name}`);
     lines.push(wine.producer);
     lines.push(
-      `${wine.flag} ${wine.country} · ${formatPrice(wine.priceRsd)} · ${wine.shop}`,
+      [
+        `${wine.flag} ${wine.country}`,
+        wine.priceRsd == null ? null : formatPrice(wine.priceRsd),
+        wine.shop,
+      ]
+        .filter(Boolean)
+        .join(" · "),
     );
     if (wine.vintage) lines.push(`Berba: ${wine.vintage}`);
     if (note.liked) lines.push(`Svidelo mi se: ${note.liked}`);
